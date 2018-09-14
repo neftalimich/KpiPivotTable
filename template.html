@@ -1,0 +1,76 @@
+<div qv-extension style="height: 100%; position: relative; overflow: auto;">
+    <div class="container">
+        <div class="row">
+            <div class="col-6">
+                <table style="width: 250px;">
+                    <thead>
+                        <tr>
+                            <th class="text-left">Dimension</th>
+                            <th>Type</th>
+                            <th>Order</th>
+                            <th>Show</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="dim in dimConfig track by $index">
+                            <td class="text-left">
+                                {{dim.qFallbackTitle}}
+                            </td>
+                            <td class="text-center">
+                                <select ng-model="dim.type" ng-change="UserConfig()">
+                                    <option value="row">Row</option>
+                                    <option value="col">Column</option>
+                                </select>
+                            </td>
+                            <td class="text-center">
+                                <i class="fas fa-chevron-circle-up text-info" ng-click=" $index > 0 && dimDown(dim,dimConfig[$index-1])" ng-class="{'text-disabled': $index == 0}"></i>
+                                <i class="fas fa-chevron-circle-down text-info" ng-click="$index < dimConfig.length && dimUp(dim,dimConfig[$index+1])" ng-class="{'text-disabled': $index == dimConfig.length-1}"></i>
+                            </td>
+                            <td class="text-center">
+                                <i class="text-info" ng-class="{'fas fa-check-square fa-lg': dim.enabled, 'far fa-square fa-lg': !dim.enabled}" ng-click="DimEnabled(dim)"></i>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-6">
+                <table style="width: 100px;">
+                    <thead>
+                        <tr>
+                            <th class="text-left">Measure</th>
+                            <th></th>
+                            <th></th>
+                            <th>Show</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="mea in meaConfig track by $index">
+                            <td class="text-left">
+                                {{mea.qFallbackTitle}}
+                            </td>
+                            <td class="text-center"></td>
+                            <td class="text-center"></td>
+                            <td class="text-center">
+                                <i class="text-info" ng-class="{'fas fa-check-square fa-lg': mea.enabled, 'far fa-square fa-lg': !mea.enabled}" ng-click="Meaenabled(mea)"></i>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-12 text-center" ng-show="!showTable">
+                <span>
+                    Loading &nbsp; <i class="fas fa-spinner fa-lg fa-spin"></i>
+                </span>
+            </div>
+            <div class="col-12" ng-show="showTable">
+                <div id="output" style="width:100%;overflow:auto;" ng-show="!layout.props.showTableUI"></div>
+                <br />
+                <div id="output2" ng-show="layout.props.showTableUI"></div>
+            </div>
+        </div>
+    </div>
+</div>

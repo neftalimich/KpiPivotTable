@@ -1,0 +1,102 @@
+.qv-object-KpiPivotTable div.qv-object-content-container {
+    overflow: auto;
+    font-family: QlikView Sans,sans-serif;
+    color: rgb(89, 89, 89);
+    line-height: 16px;
+}
+
+/* GENERAL */
+.qv-object-KpiPivotTable .text-left {
+    text-align: left;
+}
+
+.qv-object-KpiPivotTable .text-center {
+    text-align: center;
+}
+
+.qv-object-KpiPivotTable .text-right {
+    text-align: right;
+}
+
+.qv-object-KpiPivotTable .selected {
+    color: white;
+    background-color: rgb(134, 219, 134);
+    border: 2px solid rgb(82, 162, 204);
+}
+
+.qv-object-KpiPivotTable .text-success {
+    color: rgb(0, 176, 80);
+}
+
+.qv-object-KpiPivotTable .text-danger {
+    color: #f05555;
+}
+
+.qv-object-KpiPivotTable .text-info {
+    color: dodgerblue;
+}
+
+.qv-object-KpiPivotTable .text-bold {
+    font-weight: bold;
+}
+
+.qv-object-KpiPivotTable .text-italic {
+    font-style: italic;
+}
+/* GENERAL END */
+
+
+.qv-object-KpiPivotTable .container {
+    width: 98%;
+    padding-right: 5px;
+    padding-left: 5px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.qv-object-KpiPivotTable .row {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    margin-right: -5px;
+    margin-left: -5px;
+}
+
+.qv-object-KpiPivotTable .col-6, .qv-object-KpiPivotTable .col-2, .qv-object-KpiPivotTable .col-10 {
+    position: relative;
+    width: 100%;
+    min-height: 1px;
+    padding-right: 5px;
+    padding-left: 5px;
+}
+
+.qv-object-KpiPivotTable .col-10 {
+    -ms-flex: 0 0 80%;
+    flex: 0 0 80%;
+    max-width: 80%;
+}
+
+.qv-object-KpiPivotTable .col-9 {
+    -ms-flex: 0 0 75%;
+    flex: 0 0 75%;
+    max-width: 75%;
+}
+
+.qv-object-KpiPivotTable .col-6 {
+    -ms-flex: 0 0 48%;
+    flex: 0 0 48%;
+    max-width: 48%;
+}
+
+.qv-object-KpiPivotTable .col-3 {
+    -ms-flex: 0 0 25%;
+    flex: 0 0 25%;
+    max-width: 25%;
+}
+
+.qv-object-KpiPivotTable .col-2 {
+    -ms-flex: 0 0 16%;
+    flex: 0 0 16%;
+    max-width: 16%;
+}
