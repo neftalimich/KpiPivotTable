@@ -26,14 +26,22 @@ define([
             var self = this;
             if (!self.$scope.table) {
                 self.$scope.table = qlik.table(self);
+                console.log("start");
+                self.$scope.count = 1;
+                self.$scope.LoadAllDataPages(self.$scope.table);
+                //console.log("KpiPivotTable - Table", self.$scope.table);
+            } else {
+                if (self.$scope.loadingPages == false) {
+                    console.log("start");
+                    self.$scope.count = 1;
+                    self.$scope.LoadAllDataPages(self.$scope.table);
+                }
             }
-            self.$scope.LoadAllDataPages(self.$scope.table);
-            console.log("qsAngularTemplate - Table", self.$scope.table);
 
             return qlik.Promise.resolve();
         },
         controller: ['$scope', '$filter', function ($scope, $filter) {
-            console.log("qsAngularTemplate - layout", $scope.layout);
+            //console.log("qsAngularTemplate - layout", $scope.layout);
             $scope.showTable = false;
 
             // ------------------------------- Watchers
@@ -47,17 +55,14 @@ define([
                 $scope.SetPivotMeasures();
             });    
             $scope.$watchCollection("layout.qHyperCube.qDataPages", function (newValue) {
-                //console.log($scope.count);
                 if ($scope.loadingPages == false) {
-                    if (localStorage.getItem("dimConfig")) {
-                        $scope.dimConfig = JSON.parse(localStorage.getItem("dimConfig"));
+                    if (localStorage.getItem("dimConfig" + $scope.layout.qInfo.qId + $scope.layout.qInfo.qId)) {
+                        $scope.dimConfig = JSON.parse(localStorage.getItem("dimConfig" + $scope.layout.qInfo.qId));
                         //console.log("dimConfig - Saved", $scope.dimConfig);
                     }
-
                     $scope.FormatData();
                     $scope.PivotTable();
                 }
-                $scope.count += 1;
             });
             // -------------------------------
 
@@ -66,25 +71,49 @@ define([
                 if (table) {
                     $scope.showTable = false;
                     $scope.loadingPages = true;
-                    if (table.rowCount > table.rows.length) {
-                        table.getMoreData()
-                            .then(val => {
-                                $scope.LoadAllDataPages(table);
-                            }).catch(err => { console.log(err); });
-                    } else {
-                        if (localStorage.getItem("dimConfig")) {
-                            $scope.dimConfig = JSON.parse(localStorage.getItem("dimConfig"));
-                            //console.log("dimConfig - Saved", $scope.dimConfig);
+                    //console.log(table.rowCount, table.rows.length);
+                    if ($scope.count < 50) {
+                        if (table.rowCount > table.rows.length) {
+                            table.getMoreData()
+                                .then(val => {
+                                    //console.log($scope.count);
+                                    $scope.count += 1;
+                                    $scope.LoadAllDataPages(table);
+                                })
+                                .catch(err => {
+                                    if (err) {
+                                        console.log("error", err);
+                                    } else {
+                                        console.log("Reloading");
+                                    }
+                                    $scope.table = null;
+                                });
+
+                        } else {
+                            $scope.ProcessDataPages();
                         }
-
-                        $scope.FormatData();
-                        $scope.PivotTable();
-
-                        $scope.showTable = true;
-                        $scope.loadingPages = false;
-                        console.log("end", $scope.count);
+                    } else {
+                        $scope.ProcessDataPages();
                     }
                 }
+            };
+            $scope.ProcessDataPages = function () {
+                if (localStorage.getItem("dimConfig" + $scope.layout.qInfo.qId)) {
+                    $scope.dimConfig = JSON.parse(localStorage.getItem("dimConfig" + $scope.layout.qInfo.qId));
+                    //console.log("dimConfig - Saved", $scope.dimConfig);
+                }
+
+                $scope.FormatData();
+                $scope.PivotTable();
+
+                $scope.showTable = true;
+                $scope.loadingPages = false;
+                console.log("end", $scope.count);
+            };
+
+            $scope.GetMoreDataPages = function () {
+                $scope.count = 1;
+                $scope.LoadAllDataPages($scope.table);
             };
             // -------------------------------
 
@@ -126,8 +155,8 @@ define([
                 $scope.colsAux = [];
 
                 let reloadDimConfig = true;
-                if (localStorage.getItem("dimConfig")) {
-                    $scope.dimConfig = JSON.parse(localStorage.getItem("dimConfig"));
+                if (localStorage.getItem("dimConfig" + $scope.layout.qInfo.qId)) {
+                    $scope.dimConfig = JSON.parse(localStorage.getItem("dimConfig" + $scope.layout.qInfo.qId));
                     if ($scope.dimConfig.length == $scope.layout.qHyperCube.qDimensionInfo.length) {
                         reloadDimConfig = false;
                     } else {
@@ -157,7 +186,7 @@ define([
                     }
                 });
                 $scope.colsAux.push("Measures");
-                localStorage.setItem("dimConfig", JSON.stringify($scope.dimConfig));
+                localStorage.setItem("dimConfig" + $scope.layout.qInfo.qId, JSON.stringify($scope.dimConfig));
             };
             $scope.SetPivotDimensions = function () {
                 $scope.rowsAux = [];
@@ -172,7 +201,7 @@ define([
                         }
                     }
                 });
-                localStorage.setItem("dimConfig", JSON.stringify($scope.dimConfig));
+                localStorage.setItem("dimConfig" + $scope.layout.qInfo.qId, JSON.stringify($scope.dimConfig));
                 $scope.colsAux.push("Measures");
                 //console.log($scope.rowsAux, $scope.colsAux);
             };
@@ -257,7 +286,8 @@ define([
                             aggregator: sum(["Value"]),
                             sorters: {
                                 Month: $.pivotUtilities.sortAs([
-                                    "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+                                    "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+                                    "Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"
                                 ])
                             }
                         });
@@ -267,7 +297,14 @@ define([
                             rows: $scope.rowsAux,
                             cols: $scope.colsAux,
                             vals: ["Value"],
-                            aggregatorName: "Sum"
+                            aggregatorName: "Sum",
+                            sorters: {
+                                Month: $.pivotUtilities.sortAs([
+                                    "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+                                    "Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"
+                                ])
+                            },
+                            rendererName: "Heatmap"
                         });
                 }
             };
